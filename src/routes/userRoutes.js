@@ -9,8 +9,10 @@ router.get('/foom',(req,res)=>{
 
 })
 router.post('/register', UserController.register);
+router.patch('/setPrivacy', UserController.register);
 router.post('/login', UserController.login);
-router.put('/update', authenticate,UserController.updateProfile);
 router.post('/verify', UserController.verifyOtp);
+router.put('/update', authenticate,UserController.updateProfile);
+router.post('/vehicle', authenticate, UserController.createVehicle);
 
 export default router;
