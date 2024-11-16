@@ -5,7 +5,7 @@ import UserModel from '../../infrastructure/orm/models/UserModel.js';
 class VehicleRepository {
     async getVehicleByNumber(vehicleNumber) {
         try {
-            return await VehicleModel.findOne({ where: { number: vehicleNumber } });
+            return await VehicleModel.findOne({ where: {  vehicleNumber } });
         } catch (error) {
             console.error('Error fetching vehicle by number:', error);
             throw error;

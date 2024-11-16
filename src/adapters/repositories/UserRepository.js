@@ -11,6 +11,21 @@ class UserRepository {
     return await UserModel.findOne({ phone });
   }
 
+  async findById(id) {
+    return await UserModel.findById(id);
+  }
+
+  async save(user) {
+    const existingUser = await this.findById(user.id);
+    if (existingUser) {
+      Object.assign(existingUser, user);
+      await existingUser.save();
+      return existingUser;
+    } else {
+      return await this.create(user);
+    }
+  }
+
 
   // Other repository methods for updating, deleting, etc.
 }

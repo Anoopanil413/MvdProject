@@ -5,14 +5,14 @@ export default class LoginUser {
       this.otpService = otpService; 
     }
   
-    async execute({ phoneNumber }) {
-      const user = await this.userRepository.findByPhoneNumber(phoneNumber);
+    async execute({ phone }) {
+      const user = await this.userRepository.findByPhoneNumber(phone);
       if (!user) {
         throw new Error('User not found');
       }
-        await this.otpService.sendOtp(phoneNumber);
+        await this.otpService.sendOtp(phone);
   
-      return { message: `OTP sent to your phone number ${phoneNumber} for verification.` };
+      return { message: `OTP sent to your phone number ${phone} for verification.` };
     }
   }
   

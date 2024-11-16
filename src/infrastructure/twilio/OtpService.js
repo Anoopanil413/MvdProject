@@ -28,8 +28,8 @@ class TwilioOtpService {
     });
   }
 
-  async verifyOtp(phoneNumber, enteredOtp) {
-    const otpRecord = await Otp.findOne({ phoneNumber });
+  async verifyOtp(phone, enteredOtp) {
+    const otpRecord = await Otp.findOne({ phone });
 
     if (!otpRecord) {
       throw new Error('OTP expired or not found.');
@@ -39,7 +39,7 @@ class TwilioOtpService {
       throw new Error('Invalid OTP.');
     }
 
-    await Otp.deleteOne({ phoneNumber });
+    await Otp.deleteOne({ phone });
 
     return true;
   }

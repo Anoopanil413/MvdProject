@@ -9,6 +9,7 @@ export default class UpdatePrivacyPolicy {
     const user = await this.userRepository.findById(userId);
 
     if(!user)throw new Error('User not found');
+
     user.isPhoneVisible = isPhoneVisible;
     user.isNameVisible = isNameVisible;
 

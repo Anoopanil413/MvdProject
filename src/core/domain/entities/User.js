@@ -1,8 +1,8 @@
 export default class User {
-  constructor(id, name, phoneNumber, email, gender, dateOfBirth, location, city,isNameVisible=true, isPhoneVisible = true, isVerified = false, registeredVehicles = []) {
+  constructor(id, name, phone, email, gender, dateOfBirth, location, city,isNameVisible=true, isPhoneVisible = true, isVerified = false, registeredVehicles = []) {
     this.id = id;
     this.name = name;
-    this.phone = phoneNumber;
+    this.phone = phone;
     this.email = email;
     this.gender = gender;
     this.dateOfBirth = dateOfBirth;

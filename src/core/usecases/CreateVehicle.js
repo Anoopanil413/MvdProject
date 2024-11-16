@@ -6,7 +6,11 @@ export default class CreateVehicle {
     }
 
     async addVehicleToUser(vehicle) {
-        const existingVehicle = await this.vehicleRepository.findOne({ vehicleNumber: vehicle.vehicleNumber });
+        const vehicleNumberPattern = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,2}[0-9]{4}$/i;
+        if (!vehicleNumberPattern.test(vehicle.vehicleNumber)) {
+            throw new Error('Invalid vehicle number');
+        }
+        const existingVehicle = await this.vehicleRepository.getVehicleByNumber( vehicle.vehicleNumber );
         if (existingVehicle) {
             if (existingVehicle.userId.toString() === vehicle.userId.toString()) {
                 throw new Error('Vehicle is already registered');
@@ -18,7 +22,7 @@ export default class CreateVehicle {
             throw new Error('User not found');
         }
 
-        const vehicleDoc = await this.vehicleRepository.create(vehicle);
+        const vehicleDoc = await this.vehicleRepository.createVehicle(vehicle);
 
         user.registeredVehicles.push(vehicleDoc._id);
         await this.userRepository.save(user);

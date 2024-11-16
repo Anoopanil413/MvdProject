@@ -6,7 +6,7 @@ export default class RegisterUser {
       this.otpService = otpService; // Injecting Twilio OTP service
     }
     async execute(userData) {
-      const existingUser = await this.userRepository.findByPhoneNumber(userData.phoneNumber);
+      const existingUser = await this.userRepository.findByPhoneNumber(userData.phone);
       if (existingUser) {
         throw new Error('User with this phone number already exists');
       }
@@ -14,7 +14,7 @@ export default class RegisterUser {
       const newUser = new User(
         null,
         userData.name,
-        userData.phoneNumber,
+        userData.phone,
         userData.email,
         userData.gender,
         userData.dateOfBirth,
@@ -26,7 +26,7 @@ export default class RegisterUser {
       const savedUser = await this.userRepository.create(newUser);
   
       // Send OTP for verification
-      // await this.otpService.sendOtp(savedUser.phone);
+      await this.otpService.sendOtp(savedUser.phone);
   
       return savedUser;
     }

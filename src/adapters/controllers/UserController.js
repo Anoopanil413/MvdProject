@@ -7,12 +7,13 @@ import VerifyOtpAndLogin from '../../core/usecases/VerifyUser.js';
 import UpdatePrivacyPolicy from '../../core/usecases/UpdatePrivacyPolicy.js';
 import CreateVehicle from '../../core/usecases/CreateVehicle.js';
 import VehicleRepository from '../repositories/VehicleRepository.js';
+import Fast2SmsOtpService from '../../infrastructure/twilio/SmsService.js'
 
 
 class UserController {
   static async register(req, res) {
     try {
-      const useCase = new RegisterUser(userRepository, otpService);
+      const useCase = new RegisterUser(userRepository, Fast2SmsOtpService);
       const user = await useCase.execute(req.body);
       res.status(201).json({ user });
     } catch (error) {
@@ -33,7 +34,7 @@ class UserController {
 
   static async login(req, res) {
     try {
-      const useCase = new LoginUser(userRepository, otpService);
+      const useCase = new LoginUser(userRepository, Fast2SmsOtpService);      
       const result = await useCase.execute(req.body);
       res.status(200).json(result);
     } catch (error) {
@@ -42,7 +43,7 @@ class UserController {
   }
   static async verifyOtp(req, res) {
     try {
-      const useCase = new VerifyOtpAndLogin(userRepository, otpService, JwtService);
+      const useCase = new VerifyOtpAndLogin(userRepository, Fast2SmsOtpService, JwtService);
       const result = await useCase.execute(req.body);
       res.status(200).json(result);
     } catch (error) {
@@ -56,8 +57,8 @@ class UserController {
   }
   static async createVehicle(req, res) {
     try {
-      const useCase = new CreateVehicle(userRepository, VehicleRepository);
-      const vehicle = await useCase.execute(req.body);
+      const useCase = new CreateVehicle( VehicleRepository,userRepository);
+      const vehicle = await useCase.addVehicleToUser(req.body);
       res.status(201).json({ vehicle });
     } catch (error) {
       res.status(400).json({ error: error.message });

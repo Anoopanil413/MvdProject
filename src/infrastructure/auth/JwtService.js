@@ -10,4 +10,4 @@ class JwtService {
   }
 }
 
-export default new JwtService();
+export default JwtService;
