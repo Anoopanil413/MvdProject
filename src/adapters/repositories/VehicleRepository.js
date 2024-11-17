@@ -11,10 +11,27 @@ class VehicleRepository {
             throw error;
         }
     }
-
-    async createVehicle(vehicleData) {
+    async getVehicleByNUmberAndUserId(vehicleNumber,userId) {
         try {
-            return await VehicleModel.create(vehicleData);
+            return await VehicleModel.findOne({ where: {  vehicleNumber, userId } });
+        } catch (error) {
+            console.error('Error fetching vehicle by number:', error);
+            throw error;
+        }
+    }
+    async getVehicleByIdAndUserId(vehicleId, userId) {
+        try {
+            return await VehicleModel.findOne({ where: { id: vehicleId, userId } });
+        } catch (error) {
+            console.error('Error fetching vehicle by ID and user ID:', error);
+            throw error;
+        }
+    }
+
+    async createVehicle(vehicleData,userId) {
+        try {
+            const newvehicleData = {...vehicleData,userId};
+            return await VehicleModel.create(newvehicleData);
         } catch (error) {
             console.error('Error creating vehicle:', error);
             throw error;
@@ -30,9 +47,9 @@ class VehicleRepository {
         }
     }
 
-    async updateVehicle(vehicleNumber, updateData) {
+    async updateVehicle(vehicleId, updateData) {
         try {
-            const vehicle = await VehicleModel.findOne({ where: { number: vehicleNumber } });
+            const vehicle = await VehicleModel.findById(vehicleId);
             if (vehicle) {
                 return await vehicle.update(updateData);
             }
@@ -43,9 +60,9 @@ class VehicleRepository {
         }
     }
 
-    async deleteVehicle(vehicleNumber) {
+    async deleteVehicle(vehicleId) {
         try {
-            const vehicle = await VehicleModel.findOne({ where: { number: vehicleNumber } });
+            const vehicle = await VehicleModel.findById(vehicleId);
             if (vehicle) {
                 return await vehicle.destroy();
             }

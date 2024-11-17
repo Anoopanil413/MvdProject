@@ -1,13 +1,13 @@
 import RegisterUser from '../../core/usecases/RegisterUser.js';
 import userRepository from '../repositories/UserRepository.js';
-import otpService from '../../infrastructure/twilio/OtpService.js';
 import LoginUser from '../../core/usecases/LoginUser.js';
 import JwtService from '../../infrastructure/auth/JwtService.js';
 import VerifyOtpAndLogin from '../../core/usecases/VerifyUser.js';
-import UpdatePrivacyPolicy from '../../core/usecases/UpdatePrivacyPolicy.js';
-import CreateVehicle from '../../core/usecases/CreateVehicle.js';
+import UserVehicle from '../../core/usecases/UserVehicle.js';
 import VehicleRepository from '../repositories/VehicleRepository.js';
 import Fast2SmsOtpService from '../../infrastructure/twilio/SmsService.js'
+import UserProfile from '../../core/usecases/UserProfile.js';
+import MessageRepository from '../repositories/MessageRepository.js';
 
 
 class UserController {
@@ -21,15 +21,7 @@ class UserController {
     }
   }
   
-  static async createPrivacyPolicy(req, res) {
-    try {
-      const useCase = new UpdatePrivacyPolicy(userRepository);
-      const userUpdate = await useCase.execute(req.body);
-      res.status(200).json({ message: 'Privacy policy updated successfully', user });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  }
+
 
 
   static async login(req, res) {
@@ -53,17 +45,83 @@ class UserController {
 
 
   static async updateProfile(req, res) {
-    // Update user profile logic here
+    try {
+      const useCase = new UserProfile(userRepository);
+      const user = await useCase.updateProfile(req.body);
+      res.status(200).json({ user });
+    } catch (error) {
+      res.status(400).json({ error: error.message }); 
+  }
+}
+
+  static async getVehicleOwner(req, res) {
+    try {
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const {userId} = req;
+      const vehicleOwner = await useCase.getVehicleOwner(userId);
+      res.status(200).json(vehicleOwner);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   }
   static async createVehicle(req, res) {
     try {
-      const useCase = new CreateVehicle( VehicleRepository,userRepository);
-      const vehicle = await useCase.addVehicleToUser(req.body);
+      const useCase = new UserVehicle( VehicleRepository,userRepository);
+      const {userId,body} = req;
+      const vehicle = await useCase.addVehicleToUser(userId,body);
       res.status(201).json({ vehicle });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async updateUserVehicle(req, res) {
+    try {
+    const usecase = new UserVehicle(VehicleRepository, userRepository);
+    const {userId,body} = req;
+
+    const updateVehicle = await usecase.updateVehicleDetails(userId,body);
+      res.status(200).json(updateVehicle);
+    } catch (error) { 
+      res.status(400).json({ error: error.message });
+    }
+  }
+  static async deleteVehicle(req, res) {
+    try {
+      const usecase = new UserVehicle(VehicleRepository, userRepository);
+      const {userId,body} = req;
+
+      const deleteVehicle = await usecase.deleteVehicle(userId,body);
+      res.status(200).json(deleteVehicle);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async getVehicleOwner(req, res) {
+    try {
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const { userId,body} = req;
+      const vehicleOwner = await useCase.getVehicleOwner(userId,body);
+      res.status(200).json(vehicleOwner);
+    } catch (error) {
+      res.status(400).json({ error: error})
+    }
+  }
+
+  static async sendMessageToVehicleOwner(req, res) {
+    try {
+      const useCase = new UserProfile(userRepository, Fast2SmsOtpService);
+      const {userId} = req;
+      const message = await useCase.sendMessageToVehicleOwner(userId,req.body);
+      res.status(200).json(message);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+  
+
+
 }
 
 export default UserController;

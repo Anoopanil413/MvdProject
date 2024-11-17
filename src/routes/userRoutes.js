@@ -1,18 +1,25 @@
 import express from 'express';
 import UserController from '../adapters/controllers/UserController.js';
 import AuthenticationController from '../adapters/controllers/AuthenticationController.js';
+import JwtService from '../infrastructure/auth/JwtService.js';
 
 const router = express.Router();
+
+const authenticationController = new AuthenticationController(JwtService); 
+
 
 router.get('/foom',(req,res)=>{
     res.send("Hello")
 
 })
 router.post('/register', UserController.register);
-router.patch('/setPrivacy', UserController.createPrivacyPolicy);
 router.post('/login', UserController.login);
 router.post('/verify', UserController.verifyOtp);
-router.put('/update', UserController.updateProfile);
-router.post('/vehicle',  UserController.createVehicle);
+router.patch('/updateProfile', authenticationController.authenticate,UserController.updateProfile);
+router.post('/addVehicle',  authenticationController.authenticate,UserController.createVehicle);
+router.delete('/deleteVehicle',authenticationController.authenticate,UserController.deleteVehicle);
+router.patch('/updateVehicle',authenticationController.authenticate, UserController.updateUserVehicle);
+router.get('/getVehicleOwner',authenticationController.authenticate,UserController.getVehicleOwner);
+router.post('/sendMessage', authenticationController.authenticate,UserController.sendMessageToVehicleOwner);
 
 export default router;
