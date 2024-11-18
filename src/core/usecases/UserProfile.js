@@ -16,6 +16,7 @@ export default class UserProfile {
       if (updates.email) user.email = updates.email;
       if (typeof updates.isPhoneVisible !== 'undefined') user.isPhoneVisible = updates.isPhoneVisible;
       if (typeof updates.isNameVisible !== 'undefined') user.isNameVisible = updates.isNameVisible;
+      if (updates.firebaseToken) user.firebaseToken = updates.firebaseToken;
     
       const updatedUser = await this.userRepository.update(userId, user);
     

@@ -14,6 +14,15 @@ class UserRepository {
   async findById(id) {
     return await UserModel.findById(id);
   }
+  async update(id, userData) {
+    const user = await this.findById(id);
+    if (user) {
+      Object.assign(user, userData);
+      await user.save();
+      return user;
+    }
+    throw new Error('User not found');
+  }
 
   async save(user) {
     const existingUser = await this.findById(user.id);

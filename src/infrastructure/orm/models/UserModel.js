@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   phoneVisible: { type: Boolean, default: true },
   registeredVehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle' }],
   isVerified: { type: Boolean, default: false }, 
+  firebaseToken: { type: String, required: false }
 });
 
 export default mongoose.model('User', userSchema);
