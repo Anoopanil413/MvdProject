@@ -14,6 +14,16 @@ class UserRepository {
   async findById(id) {
     return await UserModel.findById(id);
   }
+
+  async removeRegisteredVehicle(userId, vehicleID) {
+    const user = await UserModel.findById(userId);
+    if (user) {
+      user.registeredVehicles = user.registeredVehicles.filter(id => id.toString() !== vehicleID.toString());
+      await user.save();
+      return user;
+    }
+    throw new Error('User not found');
+  }
   async update(id, userData) {
     const user = await this.findById(id);
     if (user) {

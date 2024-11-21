@@ -11,18 +11,12 @@ export default class UserVehicle {
         if (!vehicleNumberPattern.test(vehicle.vehicleNumber)) {
             throw new Error('Invalid vehicle number');
         }
-        const existingVehicle = await this.vehicleRepository.getVehicleByNumber( vehicle.vehicleNumber); 
-        if (existingVehicle) throw new Error('Vehicle is already registered');
         const user = await this.userRepository.findById(userId);
         if (!user) {
             throw new Error('User not found');
         }
-
         const vehicleDoc = await this.vehicleRepository.createVehicle(vehicle,userId);
-
-        user.registeredVehicles.push(vehicleDoc._id);
-        await this.userRepository.save(user);
-
+        console.log('cvehicleDoc',vehicleDoc)
         return vehicleDoc;
     }
 
@@ -32,13 +26,11 @@ export default class UserVehicle {
             throw new Error('Invalid vehicle number');
         }
 
-        const existingVehicle = await this.vehicleRepository.getVehicleById(updatedDetails.vehicleId);
-        if (!existingVehicle)throw new Error('Vehicle not found');
-
         const getUsersExistingVehicle =await this.vehicleRepository.getVehicleByNUmberAndUserId( existingVehicle.vehicleNumber,userId);
         if(!getUsersExistingVehicle)throw new Error('Vehicle not found with this user');
+        console.log("hellooo update vehicel",getUsersExistingVehicle)
 
-        const updatedVehicle = await this.vehicleRepository.updateVehicle(existingVehicle._id, updatedDetails);
+        const updatedVehicle = await this.vehicleRepository.updateVehicle(getUsersExistingVehicle._id, updatedDetails);
         return updatedVehicle;
     }
 
@@ -47,17 +39,8 @@ export default class UserVehicle {
         if (!vehicle) {
             throw new Error('Vehicle not registered to this user');
         }
-
-        const user = await this.userRepository.findById(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
         await this.vehicleRepository.deleteVehicle(vehicle._id);
-        
-            user.registeredVehicles = user.registeredVehicles.filter(id => id.toString() !== vehicle._id.toString());
-            await this.userRepository.save(user);
-        
-
+        await this.userRepository.removeRegisteredVehicle(userId,vehicle._id)
         return { message: 'Vehicle deleted successfully' };
     }
 
@@ -65,11 +48,33 @@ export default class UserVehicle {
         try {
             
             const existingVehicle = await this.vehicleRepository.getVehicleByNumber(vehicle.vehicleNumber);
-            if(!existingVehicle)throw new Error('Vehicle not found with any user');
+            if (!existingVehicle || existingVehicle.length == 0) throw new Error('Vehicle not found with any user');
+            
+            const userList = await Promise.all(existingVehicle.map(async (vehicleObj) => {
+                const user = await this.userRepository.findById(vehicleObj.userId);
+                if (!user) {
+                    throw new Error('User not found');
+                }
+                const userDetails = {
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
+                    dateOfBirth: user.dateOfBirth,
+                    location: user.location,
+                    city: user.city,
+                    registeredVehicles: user.registeredVehicles,
+                    isVerified: user.isVerified
+                };
+                if (user.phoneVisible) {
+                    userDetails.phone = user.phone;
+                }
+                return {
+                    ...vehicleObj,
+                    userDetails
+                };
+            }));
             const user = await this.userRepository.findById(existingVehicle.userId);
-            if (!user) {
-                throw new Error('User not found');
-            }
+
             const userDetails = {
                 name: user.name,
                 email: user.email,

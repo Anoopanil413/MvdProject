@@ -5,7 +5,7 @@ import UserModel from '../../infrastructure/orm/models/UserModel.js';
 class VehicleRepository {
     async getVehicleByNumber(vehicleNumber) {
         try {
-            return await VehicleModel.findOne({ where: {  vehicleNumber } });
+            return await VehicleModel.findAll({ where: { vehicleNumber } });
         } catch (error) {
             console.error('Error fetching vehicle by number:', error);
             throw error;
@@ -30,6 +30,7 @@ class VehicleRepository {
 
     async createVehicle(vehicleData,userId) {
         try {
+            
             const newvehicleData = {...vehicleData,userId};
             return await VehicleModel.create(newvehicleData);
         } catch (error) {
