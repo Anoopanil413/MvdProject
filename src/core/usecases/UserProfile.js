@@ -57,6 +57,15 @@ export default class UserProfile {
 
   }
 
+  async resetOtp(userData) {
+    const user = await this.userRepository.findByPhoneNumber(userData.phone);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await this.otpService.resendOtp(user.phone);
+    return { message: `OTP sent to your phone number ${user.phone} for verification.` };  
+
   }
+}
   
   

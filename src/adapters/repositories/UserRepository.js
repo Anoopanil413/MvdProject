@@ -44,6 +44,15 @@ class UserRepository {
       return await this.create(user);
     }
   }
+  async addRegisteredVehicle(userId, vehicleID) {
+    const user = await UserModel.findById(userId);
+    if (user) {
+      user.registeredVehicles.push(vehicleID);
+      await user.save();
+      return user;
+    }
+    throw new Error('User not found');
+  }
 
 
   // Other repository methods for updating, deleting, etc.

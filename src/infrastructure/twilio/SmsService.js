@@ -53,6 +53,43 @@ class Fast2SmsOtpService {
 
     return response.data;
   }
+  async resendOtp(phone) {
+    const otpCode = this.generateOtp();
+    const allOtpRecords = await Otp.find({ phone });
+    if (allOtpRecords.length > 0) {
+      await Otp.deleteMany({ phone });
+    }
+    const otpEntry = new Otp({
+      phone,
+      otp: otpCode,
+    });
+
+    await otpEntry.save();
+
+    const message = `Your OTP code is ${otpCode}`;
+    const payload = {
+      route: 'q',
+      message: message,
+      language: 'english',
+      flash: 0,
+      numbers: phone,
+      sender_id: 'TXTIND',
+    };
+
+    const headers = {
+      'authorization': this.apiKey,
+      'Content-Type': 'application/json',
+    };
+
+    // Send OTP using Fast2SMS API
+    const response = await axios.post(this.baseUrl, payload, { headers });
+
+    if (response.data && response.data.return !== true) {
+      throw new Error('Failed to send OTP via Fast2SMS');
+    }
+
+    return response.data;
+  }
 
   async verifyOtp(phone, enteredOtp) {
     const otpRecord = await Otp.findOne({ phone });

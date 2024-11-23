@@ -14,6 +14,7 @@ router.get('/foom',(req,res)=>{
 })
 router.post('/register', UserController.register);
 router.post('/login', UserController.login);
+router.post('/resendOtp',UserController.resendOtp);
 router.post('/verify', UserController.verifyOtp);
 router.patch('/updateProfile', authenticationController.authenticate,UserController.updateProfile);
 router.post('/addVehicle',  authenticationController.authenticate,UserController.createVehicle);

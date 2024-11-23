@@ -28,3 +28,5 @@ const vehicleSchema = new Schema({
 const Vehicle = mongoose.model('Vehicle', vehicleSchema);
 
 export default Vehicle;
+
+

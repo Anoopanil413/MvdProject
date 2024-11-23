@@ -5,7 +5,7 @@ import UserModel from '../../infrastructure/orm/models/UserModel.js';
 class VehicleRepository {
     async getVehicleByNumber(vehicleNumber) {
         try {
-            return await VehicleModel.findAll({ where: { vehicleNumber } });
+            return await VehicleModel.find({ vehicleNumber });
         } catch (error) {
             console.error('Error fetching vehicle by number:', error);
             throw error;
@@ -13,7 +13,8 @@ class VehicleRepository {
     }
     async getVehicleByNUmberAndUserId(vehicleNumber,userId) {
         try {
-            return await VehicleModel.findOne({ where: {  vehicleNumber, userId } });
+            const vehicleUser = await VehicleModel.findOne({ vehicleNumber, userId });
+            return vehicleUser
         } catch (error) {
             console.error('Error fetching vehicle by number:', error);
             throw error;
@@ -21,7 +22,8 @@ class VehicleRepository {
     }
     async getVehicleByIdAndUserId(vehicleId, userId) {
         try {
-            return await VehicleModel.findOne({ where: { id: vehicleId, userId } });
+            const vehicle = await VehicleModel.findOne({ _id:vehicleId, userId: userId });
+            return vehicle;
         } catch (error) {
             console.error('Error fetching vehicle by ID and user ID:', error);
             throw error;
@@ -52,7 +54,7 @@ class VehicleRepository {
         try {
             const vehicle = await VehicleModel.findById(vehicleId);
             if (vehicle) {
-                return await vehicle.update(updateData);
+                return await VehicleModel.findByIdAndUpdate(vehicleId, updateData, { new: true });
             }
             throw new Error('Vehicle not found');
         } catch (error) {
@@ -65,7 +67,7 @@ class VehicleRepository {
         try {
             const vehicle = await VehicleModel.findById(vehicleId);
             if (vehicle) {
-                return await vehicle.destroy();
+                return await VehicleModel.findByIdAndDelete(vehicleId);
             }
             throw new Error('Vehicle not found');
         } catch (error) {

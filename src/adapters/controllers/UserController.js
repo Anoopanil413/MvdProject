@@ -119,6 +119,16 @@ class UserController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async resendOtp(req, res) {
+    try {
+      const useCase = new UserProfile(userRepository, Fast2SmsOtpService);
+      const result = await useCase.resetOtp(req.body);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
   
 
 
