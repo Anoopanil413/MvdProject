@@ -111,7 +111,7 @@ class UserController {
 
   static async sendMessageToVehicleOwner(req, res) {
     try {
-      const useCase = new UserProfile(userRepository, Fast2SmsOtpService);
+      const useCase = new UserProfile(userRepository, Fast2SmsOtpService,VehicleRepository);
       const {userId} = req;
       const message = await useCase.sendMessageToVehicleOwner(userId,req.body);
       res.status(200).json(message);

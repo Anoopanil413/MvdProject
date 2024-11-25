@@ -1,8 +1,9 @@
 // /src/core/usecases/UpdateUserProfile.js
 export default class UserProfile {
-    constructor(userRepository,otpService) {
+    constructor(userRepository,otpService,vehicleRepository=null) {
       this.userRepository = userRepository;
       this.otpService = otpService;
+      this.vehicleRepository = vehicleRepository;
 
     }
   
@@ -51,6 +52,7 @@ export default class UserProfile {
         return { message: `Message sent to vehicle owner phone number ${ownerdetails}` };
 
       } catch (error) {
+        console.error('Error sending message to vehicle owner:', error);
         throw new Error('Error sending message to vehicle owner');
           
       }

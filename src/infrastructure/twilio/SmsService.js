@@ -128,7 +128,7 @@ class Fast2SmsOtpService {
       senderId,
       receiverId,
       message: messageContent,
-      sentAt: new Date.now(),
+      sentAt: new Date(),
     })
 
     if (response.data && response.data.return !== true) {

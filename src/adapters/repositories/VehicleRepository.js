@@ -11,6 +11,33 @@ class VehicleRepository {
             throw error;
         }
     }
+    async getVehicleWithUserDataByNumber(vehicleNumber) {
+        try {
+            const vehicles = await VehicleModel.find({ vehicleNumber }).populate({
+              path: 'userId',
+              select: 'phone name email location city phoneVisible', 
+            });
+        
+            // Process to exclude phone when phoneVisible is false
+            const processedVehicles = vehicles.map((vehicle) => {
+              if (vehicle.userId && !vehicle.userId.phoneVisible) {
+                const { phone, ...userWithoutPhone } = vehicle.userId._doc;
+                return { ...vehicle._doc, userId: userWithoutPhone };
+              }
+              return vehicle;
+            });
+        
+            if (!processedVehicles.length) {
+              return { message: 'No vehicles found with the given vehicle number' };
+            }
+        
+            return processedVehicles;
+          } catch (error) {
+            console.error('Error fetching vehicle details:', error);
+            throw new Error('Error retrieving vehicle details');
+          }
+    }
+    
     async getVehicleByNUmberAndUserId(vehicleNumber,userId) {
         try {
             const vehicleUser = await VehicleModel.findOne({ vehicleNumber, userId });

@@ -56,35 +56,9 @@ export default class UserVehicle {
     async getVehicleOwner(userId,vehicle) {
         try {
             
-            const existingVehicle = await this.vehicleRepository.getVehicleByNumber(vehicle.vehicleNumber);
+            const existingVehicle = await this.vehicleRepository.getVehicleWithUserDataByNumber(vehicle.vehicleNumber);
             if (!existingVehicle || existingVehicle.length == 0) throw new Error('Vehicle not found with any user');
-            console.log(existingVehicle);
-            
-            const userList = await Promise.all(existingVehicle.map(async (vehicleObj) => {
-                const user = await this.userRepository.findById(vehicleObj.userId);
-                if (!user) {
-                    throw new Error('User not found');
-                }
-                const userDetails = {
-                    name: user.name,
-                    email: user.email,
-                    gender: user.gender,
-                    dateOfBirth: user.dateOfBirth,
-                    location: user.location,
-                    city: user.city,
-                    registeredVehicles: user.registeredVehicles,
-                    isVerified: user.isVerified
-                };
-                if (user.phoneVisible) {
-                    userDetails.phone = user.phone;
-                }
-                return {
-                    ...vehicleObj,
-                    userDetails
-                };
-            }));
-            
-            return userList;
+            return existingVehicle;
         } catch (error) {
             throw error;
         }
