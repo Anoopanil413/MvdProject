@@ -18,6 +18,11 @@ const messageSchema = new mongoose.Schema({
     sentAt: {
         type: Date,
         default: Date.now()
+    },
+    type: {
+        type: String,
+        enum: ['text', 'notification'],
+        default: 'text'
     }
 });
 

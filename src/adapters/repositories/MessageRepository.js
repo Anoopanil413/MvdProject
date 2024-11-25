@@ -13,6 +13,15 @@ class MessageRepository {
             throw new Error('Error creating message record: ' + error.message);
         }
     }
+
+
+    async getMessagesByUserId(userId) {
+        try {
+            return await Message.find({ userId });
+        } catch (error) {
+            throw new Error('Error fetching messages: ' + error.message);
+        }
+    }
 }
 
 export default MessageRepository;
