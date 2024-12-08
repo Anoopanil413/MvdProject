@@ -54,16 +54,16 @@ class UserController {
   }
 }
 
-  static async getVehicleOwner(req, res) {
-    try {
-      const useCase = new UserVehicle(VehicleRepository, userRepository);
-      const {userId} = req;
-      const vehicleOwner = await useCase.getVehicleOwner(userId);
-      res.status(200).json(vehicleOwner);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  }
+  // static async getVehicleOwner(req, res) {
+  //   try {
+  //     const useCase = new UserVehicle(VehicleRepository, userRepository);
+  //     const {userId} = req;
+  //     const vehicleOwner = await useCase.getVehicleOwner(userId);
+  //     res.status(200).json(vehicleOwner);
+  //   } catch (error) {
+  //     res.status(400).json({ error: error.message });
+  //   }
+  // }
   static async createVehicle(req, res) {
     try {
       const useCase = new UserVehicle( VehicleRepository,userRepository);

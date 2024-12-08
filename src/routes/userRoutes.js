@@ -10,7 +10,6 @@ const authenticationController = new AuthenticationController(JwtService);
 
 router.get('/foom',(req,res)=>{
     res.send("Hello")
-
 })
 router.post('/register', UserController.register);
 router.post('/login', UserController.login);

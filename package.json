@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "\"This is a application for linking vehicle to users mobile phone for parking notification on any occasions\"",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "firebase-admin": "^13.0.0",
