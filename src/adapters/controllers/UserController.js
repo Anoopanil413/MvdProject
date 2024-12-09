@@ -17,6 +17,7 @@ class UserController {
       const user = await useCase.execute(req.body);
       res.status(201).json({ user });
     } catch (error) {
+
       res.status(400).json({ error: error.message });
     }
   }
@@ -64,6 +65,19 @@ class UserController {
   //     res.status(400).json({ error: error.message });
   //   }
   // }
+
+  static async getMyVehicle(req, res) {
+  try {
+    const useCase = new UserVehicle(VehicleRepository, userRepository);
+    const {userId} = req;
+    const myVehicles = await useCase.getMyVehicles(userId);
+    res.status(200).json(myVehicles);
+  
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async createVehicle(req, res) {
     try {
       const useCase = new UserVehicle( VehicleRepository,userRepository);

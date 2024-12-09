@@ -6,6 +6,8 @@ export default class UserVehicle {
     }
 
     async addVehicleToUser(userId, vehicle) {
+        try {
+
         const vehicleNumberPattern = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,2}[0-9]{4}$/i;
 
         if (!vehicleNumberPattern.test(vehicle.vehicleNumber)) {
@@ -22,9 +24,30 @@ export default class UserVehicle {
         const vehicleDoc = await this.vehicleRepository.createVehicle(vehicle,userId);
         await this.userRepository.addRegisteredVehicle(userId, vehicleDoc._id);
         return vehicleDoc;
+                    
+    } catch (error) {
+        throw error;
+    }
+    }
+
+    async getMyVehicles(userId) {
+        try {
+            
+        
+        const user = await this.userRepository.findById(userId).populate('registeredVehicles');
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user.registeredVehicles;
+    } catch (error) {
+            throw error;
+    }
     }
 
     async updateVehicleDetails( userId,updatedDetails) {
+        try {
+            
+
         const vehicleNumberPattern = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,2}[0-9]{4}$/i;
         if (updatedDetails.vehicleNumber && !vehicleNumberPattern.test(updatedDetails.vehicleNumber)) {
             throw new Error('Invalid vehicle number');
@@ -37,13 +60,20 @@ export default class UserVehicle {
             if(vehicleRegistry){
                 throw new Error('Vehicle already registered with this user');
         }
+        
     }
 
         const updatedVehicle = await this.vehicleRepository.updateVehicle(getUsersExistingVehicle._id, updatedDetails);
         return updatedVehicle;
+    } catch (error) {
+        throw error;
+        
+    }
     }
 
     async deleteVehicle(userId,data) {
+        try {
+        
         const vehicle = await this.vehicleRepository.getVehicleByIdAndUserId(data._id,userId);
         if (!vehicle) {
             throw new Error('Vehicle not registered to this user');
@@ -51,6 +81,10 @@ export default class UserVehicle {
         await this.vehicleRepository.deleteVehicle(vehicle._id);
         await this.userRepository.removeRegisteredVehicle(userId,vehicle._id)
         return { message: 'Vehicle deleted successfully' };
+    } catch (error) {
+        throw error;
+        
+    }
     }
 
     async getVehicleOwner(userId,vehicle) {
