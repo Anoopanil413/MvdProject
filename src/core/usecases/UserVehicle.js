@@ -32,9 +32,8 @@ export default class UserVehicle {
 
     async getMyVehicles(userId) {
         try {
-            
-        
-        const user = await this.userRepository.findById(userId).populate('registeredVehicles');
+
+        const user = await this.userRepository.getVehicleByUserId(userId);
         if (!user) {
             throw new Error('User not found');
         }

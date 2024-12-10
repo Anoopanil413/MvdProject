@@ -40,7 +40,7 @@ class VehicleRepository {
     
     async getVehicleByNUmberAndUserId(vehicleNumber,userId) {
         try {
-            const vehicleUser = await VehicleModel.findOne({ vehicleNumber, userId });
+            const vehicleUser = await VehicleModel.findOne({ vehicleNumber:vehicleNumber.toString().toLowerCase(), userId });
             return vehicleUser
         } catch (error) {
             console.error('Error fetching vehicle by number:', error);
@@ -60,7 +60,7 @@ class VehicleRepository {
     async createVehicle(vehicleData,userId) {
         try {
             
-            const newvehicleData = {...vehicleData,userId};
+            const newvehicleData = { ...vehicleData, vehicleNumber: vehicleData.vehicleNumber.toLowerCase(), userId };
             return await VehicleModel.create(newvehicleData);
         } catch (error) {
             console.error('Error creating vehicle:', error);

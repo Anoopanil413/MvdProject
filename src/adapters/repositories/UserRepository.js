@@ -54,8 +54,15 @@ class UserRepository {
     throw new Error('User not found');
   }
 
+  async getVehicleByUserId(userId) {
+    const user = await UserModel.findById(userId).populate('registeredVehicles');
+    if (user) {
+      return user.registeredVehicles;
+    }
+    throw new Error('User not found');
+  }
 
-  // Other repository methods for updating, deleting, etc.
+
 }
 
 export default new UserRepository();
