@@ -37,7 +37,7 @@ export default class UserVehicle {
         if (!user) {
             throw new Error('User not found');
         }
-        return user.registeredVehicles;
+        return user;
     } catch (error) {
             throw error;
     }
