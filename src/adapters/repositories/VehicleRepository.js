@@ -13,7 +13,7 @@ class VehicleRepository {
     }
     async getVehicleWithUserDataByNumber(vehicleNumber) {
         try {
-            const vehicles = await VehicleModel.find({ vehicleNumber }).populate({
+            const vehicles = await VehicleModel.find({ vehicleNumber: vehicleNumber.toString().toLowerCase().trim() }).populate({
               path: 'userId',
               select: 'phone name email location city phoneVisible', 
             });

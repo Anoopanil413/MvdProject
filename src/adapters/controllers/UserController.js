@@ -15,6 +15,7 @@ class UserController {
     try {
       const useCase = new RegisterUser(userRepository, Fast2SmsOtpService);
       const user = await useCase.execute(req.body);
+      console.log("user",user)
       res.status(201).json({ user });
     } catch (error) {
 
@@ -48,7 +49,7 @@ class UserController {
   static async updateProfile(req, res) {
     try {
       const useCase = new UserProfile(userRepository);
-      const user = await useCase.updateProfile(req.body);
+      const user = await useCase.updateProfile(req.userId,req.body);
       res.status(200).json({ user });
     } catch (error) {
       res.status(400).json({ error: error.message }); 
