@@ -7,7 +7,6 @@ import UserVehicle from '../../core/usecases/UserVehicle.js';
 import VehicleRepository from '../repositories/VehicleRepository.js';
 import Fast2SmsOtpService from '../../infrastructure/twilio/SmsService.js'
 import UserProfile from '../../core/usecases/UserProfile.js';
-import MessageRepository from '../repositories/MessageRepository.js';
 
 
 class UserController {
@@ -15,16 +14,21 @@ class UserController {
     try {
       const useCase = new RegisterUser(userRepository, Fast2SmsOtpService);
       const user = await useCase.execute(req.body);
-      console.log("user",user)
       res.status(201).json({ user });
     } catch (error) {
-
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
-  
-
-
+  static async getUSer(req, res) {
+    try {
+      const useCase = new LoginUser(userRepository);
+      const {userId} = req;
+      const user = await useCase.verifyUSer(userId);
+      res.status(201).json( {user} );
+    } catch (error) {
+      UserController.handleError(res, error);
+    }
+  }
 
   static async login(req, res) {
     try {
@@ -32,106 +36,93 @@ class UserController {
       const result = await useCase.execute(req.body);
       res.status(200).json(result);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
+
   static async verifyOtp(req, res) {
     try {
       const useCase = new VerifyOtpAndLogin(userRepository, Fast2SmsOtpService, JwtService);
       const result = await useCase.execute(req.body);
       res.status(200).json(result);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
-
 
   static async updateProfile(req, res) {
     try {
       const useCase = new UserProfile(userRepository);
-      const user = await useCase.updateProfile(req.userId,req.body);
+      const user = await useCase.updateProfile(req.userId, req.body);
       res.status(200).json({ user });
     } catch (error) {
-      res.status(400).json({ error: error.message }); 
+      UserController.handleError(res, error);
+    }
   }
-}
-
-  // static async getVehicleOwner(req, res) {
-  //   try {
-  //     const useCase = new UserVehicle(VehicleRepository, userRepository);
-  //     const {userId} = req;
-  //     const vehicleOwner = await useCase.getVehicleOwner(userId);
-  //     res.status(200).json(vehicleOwner);
-  //   } catch (error) {
-  //     res.status(400).json({ error: error.message });
-  //   }
-  // }
 
   static async getMyVehicle(req, res) {
-  try {
-    const useCase = new UserVehicle(VehicleRepository, userRepository);
-    const {userId} = req;
-    const myVehicles = await useCase.getMyVehicles(userId);
-    res.status(200).json(myVehicles);
-  
+    try {
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const { userId } = req;
+      const myVehicles = await useCase.getMyVehicles(userId);
+      res.status(200).json(myVehicles);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
 
   static async createVehicle(req, res) {
     try {
-      const useCase = new UserVehicle( VehicleRepository,userRepository);
-      const {userId,body} = req;
-      const vehicle = await useCase.addVehicleToUser(userId,body);
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const { userId, body } = req;
+      const vehicle = await useCase.addVehicleToUser(userId, body);
       res.status(201).json({ vehicle });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
 
   static async updateUserVehicle(req, res) {
     try {
-    const usecase = new UserVehicle(VehicleRepository, userRepository);
-    const {userId,body} = req;
-
-    const updateVehicle = await usecase.updateVehicleDetails(userId,body);
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const { userId, body } = req;
+      const updateVehicle = await useCase.updateVehicleDetails(userId, body);
       res.status(200).json(updateVehicle);
-    } catch (error) { 
-      res.status(400).json({ error: error.message });
+    } catch (error) {
+      UserController.handleError(res, error);
     }
   }
+
   static async deleteVehicle(req, res) {
     try {
-      const usecase = new UserVehicle(VehicleRepository, userRepository);
-      const {userId,body} = req;
-
-      const deleteVehicle = await usecase.deleteVehicle(userId,body);
+      const useCase = new UserVehicle(VehicleRepository, userRepository);
+      const { userId, body } = req;
+      const deleteVehicle = await useCase.deleteVehicle(userId, body);
       res.status(200).json(deleteVehicle);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
 
   static async getVehicleOwner(req, res) {
     try {
       const useCase = new UserVehicle(VehicleRepository, userRepository);
-      const { userId,body} = req;
-      const vehicleOwner = await useCase.getVehicleOwner(userId,body);
+      const { userId, body } = req;
+      const vehicleOwner = await useCase.getVehicleOwner(userId, body);
       res.status(200).json(vehicleOwner);
     } catch (error) {
-      res.status(400).json({ error: error})
+      UserController.handleError(res, error);
     }
   }
 
   static async sendMessageToVehicleOwner(req, res) {
     try {
-      const useCase = new UserProfile(userRepository, Fast2SmsOtpService,VehicleRepository);
-      const {userId} = req;
-      const message = await useCase.sendMessageToVehicleOwner(userId,req.body);
+      const useCase = new UserProfile(userRepository, Fast2SmsOtpService, VehicleRepository);
+      const { userId } = req;
+      const message = await useCase.sendMessageToVehicleOwner(userId, req.body);
       res.status(200).json(message);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
 
@@ -141,12 +132,15 @@ class UserController {
       const result = await useCase.resetOtp(req.body);
       res.status(200).json(result);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      UserController.handleError(res, error);
     }
   }
-  
 
-
+  static handleError(res, error) {
+    const statusCode = error.statusCode || 400;
+    const message = error.message || 'An unexpected error occurred';
+    res.status(statusCode).json({ error: message });
+  }
 }
 
 export default UserController;

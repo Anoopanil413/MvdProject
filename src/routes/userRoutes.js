@@ -19,8 +19,9 @@ router.patch('/updateProfile', authenticationController.authenticate,UserControl
 router.post('/addVehicle',  authenticationController.authenticate,UserController.createVehicle);
 router.delete('/deleteVehicle',authenticationController.authenticate,UserController.deleteVehicle);
 router.patch('/updateVehicle',authenticationController.authenticate, UserController.updateUserVehicle);
-router.get('/getVehicleOwner',authenticationController.authenticate,UserController.getVehicleOwner);
+router.post('/getVehicleOwner',authenticationController.authenticate,UserController.getVehicleOwner);
 router.post('/sendMessage', authenticationController.authenticate,UserController.sendMessageToVehicleOwner);
 router.get('/getMyVehicles', authenticationController.authenticate,UserController.getMyVehicle);
+router.get('/validateUser', authenticationController.authenticate,UserController.getUSer);
 
 export default router;

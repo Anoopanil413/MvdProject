@@ -26,11 +26,7 @@ class VehicleRepository {
               }
               return vehicle;
             });
-        
-            if (!processedVehicles.length) {
-              return { message: 'No vehicles found with the given vehicle number' };
-            }
-        
+
             return processedVehicles;
           } catch (error) {
             console.error('Error fetching vehicle details:', error);
@@ -63,7 +59,6 @@ class VehicleRepository {
             const newvehicleData = { ...vehicleData, vehicleNumber: vehicleData.vehicleNumber.toLowerCase(), userId };
             return await VehicleModel.create(newvehicleData);
         } catch (error) {
-            console.error('Error creating vehicle:', error);
             throw error;
         }
     }

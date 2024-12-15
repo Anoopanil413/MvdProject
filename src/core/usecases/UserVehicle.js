@@ -1,4 +1,4 @@
-// /src/core/usecases/CreateVehicle.js
+import CustomError from "../../adapters/controllers/ErrorHandler.js";
 export default class UserVehicle {
     constructor(vehicleRepository, userRepository) {
         this.vehicleRepository = vehicleRepository;
@@ -6,40 +6,45 @@ export default class UserVehicle {
     }
 
     async addVehicleToUser(userId, vehicle) {
-        try {
 
         const vehicleNumberPattern = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,2}[0-9]{4}$/i;
 
         if (!vehicleNumberPattern.test(vehicle.vehicleNumber)) {
-            throw new Error('Invalid vehicle number');
+            throw new CustomError('Invalid vehicle number', 400);
         }
         const user = await this.userRepository.findById(userId);
         if (!user) {
-            throw new Error('User not found');
+            throw new CustomError('User not found', 404);
         }
-        const vehicleRegistry = await this.vehicleRepository.getVehicleByNUmberAndUserId(vehicle.vehicleNumber,userId);
-        if(vehicleRegistry){
-            throw new Error('Vehicle already registered with this user');
+        const vehicleRegistry = await this.vehicleRepository.getVehicleByNUmberAndUserId(vehicle.vehicleNumber, userId);
+        if (vehicleRegistry) {
+            throw new CustomError('Vehicle already registered with this user', 409);
         }
-        const vehicleDoc = await this.vehicleRepository.createVehicle(vehicle,userId);
-        await this.userRepository.addRegisteredVehicle(userId, vehicleDoc._id);
+        let vehicleDoc;
+        try {
+            vehicleDoc = await this.vehicleRepository.createVehicle(vehicle, userId);
+        } catch (error) {
+            throw new CustomError('Error creating vehicle', 500);
+        }
+
+        try {
+            await this.userRepository.addRegisteredVehicle(userId, vehicleDoc._id);
+        } catch (error) {
+            throw new CustomError('Error adding vehicle to user', 500);
+        }
         return vehicleDoc;
                     
-    } catch (error) {
-        throw error;
-    }
     }
 
     async getMyVehicles(userId) {
         try {
-
         const user = await this.userRepository.getVehicleByUserId(userId);
         if (!user) {
-            throw new Error('User not found');
+            throw new CustomError('User not found', 404);
         }
         return user;
     } catch (error) {
-            throw error;
+        throw new CustomError('User not found', 404);
     }
     }
 
@@ -87,15 +92,23 @@ export default class UserVehicle {
     }
 
     async getVehicleOwner(userId,vehicle) {
+        let user
+
         try {
-            
-            const existingVehicle = await this.vehicleRepository.getVehicleWithUserDataByNumber(vehicle.vehicleNumber);
-            if (!existingVehicle || existingVehicle.length == 0) throw new Error('Vehicle not found with any user');
-            return existingVehicle;
+            user = await this.userRepository.findById(userId);
+            if(!user) throw new CustomError('User not found', 404);
         } catch (error) {
-            throw error;
+            throw new CustomError('User not found', 404);
+
         }
-            
+        let existingVehicle
+            try {
+                existingVehicle = await this.vehicleRepository.getVehicleWithUserDataByNumber(vehicle.vehicleNumber);
+            } catch (error) {
+                throw new CustomError('Vehicle not found with any user', 404);
+            }
+            return existingVehicle;
+
     }
 
 

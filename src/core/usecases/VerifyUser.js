@@ -1,3 +1,5 @@
+import CustomError from "../../adapters/controllers/ErrorHandler.js";
+
 export default class VerifyOtpAndLogin {
   constructor(userRepository, otpService, jwtService) {
     this.userRepository = userRepository;
@@ -8,12 +10,12 @@ export default class VerifyOtpAndLogin {
   async execute({ phone, otp }) {
     const isOtpValid = await this.otpService.verifyOtp(phone, otp);
     if (!isOtpValid) {
-      throw new Error('Invalid or expired OTP');
+      throw new CustomError('Invalid or expired OTP', 400);
     }
 
     const user = await this.userRepository.findByPhoneNumber(phone);
     if (!user) {
-      throw new Error('User not found');
+      throw new CustomError('User not found', 404);
     }
 
     const token = this.jwtService.generateToken({ id: user.id, phone: user.phone });
