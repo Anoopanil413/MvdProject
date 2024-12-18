@@ -23,5 +23,6 @@ router.post('/getVehicleOwner',authenticationController.authenticate,UserControl
 router.post('/sendMessage', authenticationController.authenticate,UserController.sendMessageToVehicleOwner);
 router.get('/getMyVehicles', authenticationController.authenticate,UserController.getMyVehicle);
 router.get('/validateUser', authenticationController.authenticate,UserController.getUSer);
+router.get('/sendEMail', authenticationController.authenticate,UserController.handleSendEmail);
 
 export default router;

@@ -17,6 +17,7 @@
     "express": "^4.21.1",
     "firebase-admin": "^13.0.0",
     "mongoose": "^8.7.2",
+    "nodemailer": "^6.9.16",
     "twilio": "^5.3.4"
   },
   "devDependencies": {

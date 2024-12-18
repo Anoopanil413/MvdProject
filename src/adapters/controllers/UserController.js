@@ -7,6 +7,9 @@ import UserVehicle from '../../core/usecases/UserVehicle.js';
 import VehicleRepository from '../repositories/VehicleRepository.js';
 import Fast2SmsOtpService from '../../infrastructure/twilio/SmsService.js'
 import UserProfile from '../../core/usecases/UserProfile.js';
+import UserNotification from '../../core/usecases/UserNotification.js';
+import EmailService  from '../../infrastructure/nodemailer/nodemailer.confog.js';
+import MessageRepository from '../repositories/MessageRepository.js'
 
 
 class UserController {
@@ -128,6 +131,7 @@ class UserController {
 
   static async resendOtp(req, res) {
     try {
+      
       const useCase = new UserProfile(userRepository, Fast2SmsOtpService);
       const result = await useCase.resetOtp(req.body);
       res.status(200).json(result);
@@ -135,12 +139,30 @@ class UserController {
       UserController.handleError(res, error);
     }
   }
+  
+  static async handleSendEmail(req,res) {
+    try {
+      const messageRepo = new MessageRepository()
+
+      const useCase  = new UserNotification(EmailService,messageRepo,userRepository)
+      const {userId} = req;
+      const message = await useCase.sendEmail(userId, req.body);
+      res.status(200).json(message);
+
+      
+    } catch (error) {
+      UserController.handleError(res, error);
+
+    }
+    
+  }
 
   static handleError(res, error) {
     const statusCode = error.statusCode || 400;
     const message = error.message || 'An unexpected error occurred';
     res.status(statusCode).json({ error: message });
   }
+
 }
 
 export default UserController;

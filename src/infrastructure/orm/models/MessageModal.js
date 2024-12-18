@@ -21,7 +21,7 @@ const messageSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['text', 'notification'],
+        enum: ['text', 'notification','email'],
         default: 'text'
     }
 });
