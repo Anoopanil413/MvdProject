@@ -1,8 +1,7 @@
+import admin from "../../../firebase.js";
+ class UserNotificationService{
 
-import admin from 'firebase-admin';
-export default class UserNotificationService{
-
-    static sendNotification(phone, message){
+    static async sendNotification(phone, message){
         const payload = {
             notification: {
                 title: message.title,
@@ -11,15 +10,17 @@ export default class UserNotificationService{
         };
 
         payload.token = phone;
+    try {
+           return  await admin.messaging().send(payload)
+        } catch (error) {
+            throw new Error('Error sending notification: ' + error.message);
+            
+        }
 
-        admin.messaging().send(payload)
-            .then(response => {
-                console.log('Successfully sent message:', response);
-            })
-            .catch(error => {
-                console.error('Error sending message:', error);
-            });
+
     }
     
 
 } 
+
+export default new UserNotificationService();

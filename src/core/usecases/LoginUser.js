@@ -26,6 +26,16 @@ export default class LoginUser {
       }
       return user;
     }
+
+    async setFcmToken(userId, fcmToken) {
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new CustomError('User not found', 404);
+      }
+      user.firebaseToken = fcmToken;
+      await this.userRepository.update(user);
+      return { message: 'FCM token updated successfully' };
+    }
   }
   
   

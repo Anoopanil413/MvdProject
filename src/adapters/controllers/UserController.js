@@ -10,6 +10,7 @@ import UserProfile from '../../core/usecases/UserProfile.js';
 import UserNotification from '../../core/usecases/UserNotification.js';
 import EmailService  from '../../infrastructure/nodemailer/nodemailer.confog.js';
 import MessageRepository from '../repositories/MessageRepository.js'
+import UserNotificationService from '../../infrastructure/notification/userNotifiaction.js';
 
 
 class UserController {
@@ -37,6 +38,17 @@ class UserController {
     try {
       const useCase = new LoginUser(userRepository, Fast2SmsOtpService);      
       const result = await useCase.execute(req.body);
+      res.status(200).json(result);
+    } catch (error) {
+      UserController.handleError(res, error);
+    }
+  }
+
+  static async setToken(req, res) {
+    try {
+      const useCase = new LoginUser(userRepository, Fast2SmsOtpService);  
+      const {userId} = req;    
+      const result = await useCase.setFcmToken(userId,req.body);
       res.status(200).json(result);
     } catch (error) {
       UserController.handleError(res, error);
@@ -99,8 +111,8 @@ class UserController {
   static async deleteVehicle(req, res) {
     try {
       const useCase = new UserVehicle(VehicleRepository, userRepository);
-      const { userId, body } = req;
-      const deleteVehicle = await useCase.deleteVehicle(userId, body);
+      const { userId, query } = req;
+      const deleteVehicle = await useCase.deleteVehicle(userId, query);
       res.status(200).json(deleteVehicle);
     } catch (error) {
       UserController.handleError(res, error);
@@ -147,6 +159,21 @@ class UserController {
       const useCase  = new UserNotification(EmailService,messageRepo,userRepository)
       const {userId} = req;
       const message = await useCase.sendEmail(userId, req.body);
+      res.status(200).json(message);
+
+      
+    } catch (error) {
+      UserController.handleError(res, error);
+
+    }
+    
+  }
+  static async sendNotification(req,res) {
+    try {
+      const messageRepo = new MessageRepository()
+      const useCase  = new UserNotification(UserNotificationService,messageRepo,userRepository)
+      const {userId} = req;
+      const message = await useCase.sendNotificationToUser(userId, req.body);
       res.status(200).json(message);
 
       

@@ -23,6 +23,8 @@ router.post('/getVehicleOwner',authenticationController.authenticate,UserControl
 router.post('/sendMessage', authenticationController.authenticate,UserController.sendMessageToVehicleOwner);
 router.get('/getMyVehicles', authenticationController.authenticate,UserController.getMyVehicle);
 router.get('/validateUser', authenticationController.authenticate,UserController.getUSer);
-router.get('/sendEMail', authenticationController.authenticate,UserController.handleSendEmail);
+router.post('/sendEMail', authenticationController.authenticate,UserController.handleSendEmail);
+router.post('/fcmToken', authenticationController.authenticate,UserController.setToken);
+router.post('/send-notification"', authenticationController.authenticate,UserController.sendNotification);
 
 export default router;

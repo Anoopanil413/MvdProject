@@ -1,4 +1,4 @@
-import CustomError from "../../adapters/controllers/ErrorHandler";
+import CustomError from "../../adapters/controllers/ErrorHandler.js";
 
 export default class UserNotification {
     constructor(notificationService, messageRepository,userRepository) {
@@ -7,10 +7,10 @@ export default class UserNotification {
         this.userRepository = userRepository;
     }
 
-    async sendNotification(userId, message) {
+    async sendNotificationToUser(userId, message) {
         const user = await this.userRepository.findById(userId);
         if (!user) {
-            throw new Error('User not found');
+            throw new Error('User not found');  
         }
         await this.notificationService.sendNotification(user.phone, message);
         const messageRecord = await this.messageRepository.createMessageRecord({
@@ -19,6 +19,7 @@ export default class UserNotification {
         });
         return messageRecord;
     }
+
     generateEmailHtml(email, user) {
         return `
         <!DOCTYPE html>

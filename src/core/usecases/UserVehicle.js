@@ -57,7 +57,7 @@ export default class UserVehicle {
             throw new Error('Invalid vehicle number');
         }
 
-        const getUsersExistingVehicle =await this.vehicleRepository.getVehicleByIdAndUserId( updatedDetails._id,userId);
+        const getUsersExistingVehicle =await this.vehicleRepository.getVehicleByIdAndUserId( updatedDetails.id,userId);
         if(!getUsersExistingVehicle)throw new Error('Vehicle not found with this user');
         if(updatedDetails.vehicleNumber !== getUsersExistingVehicle.vehicleNumber){
             const vehicleRegistry = await this.vehicleRepository.getVehicleByNUmberAndUserId(updatedDetails.vehicleNumber,userId);
@@ -76,9 +76,8 @@ export default class UserVehicle {
     }
 
     async deleteVehicle(userId,data) {
-        try {
-        
-        const vehicle = await this.vehicleRepository.getVehicleByIdAndUserId(data._id,userId);
+        try {        
+        const vehicle = await this.vehicleRepository.getVehicleByIdAndUserId(data.id,userId);
         if (!vehicle) {
             throw new Error('Vehicle not registered to this user');
         }
