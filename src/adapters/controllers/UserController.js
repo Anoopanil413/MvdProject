@@ -170,8 +170,10 @@ class UserController {
   }
   static async sendNotification(req,res) {
     try {
-      const messageRepo = new MessageRepository()
-      const useCase  = new UserNotification(UserNotificationService,messageRepo,userRepository)
+      console.log('req')
+      const messageRepo = MessageRepository
+      const notificationService = UserNotificationService
+      const useCase  = new UserNotification(notificationService,messageRepo,userRepository)
       const {userId} = req;
       const message = await useCase.sendNotificationToUser(userId, req.body);
       res.status(200).json(message);
@@ -182,6 +184,16 @@ class UserController {
 
     }
     
+  }
+
+  static async getAllUnreadNotifications(req,res) {
+    const messageRepo = new MessageRepository()
+
+    const usecase =  new UserNotification(UserNotificationService,messageRepo,userRepository)
+    const {userId} = req;
+    const messages = await usecase.getUserUnreadNotificationMessages(userId);
+    res.status(200).json(messages);
+
   }
 
   static handleError(res, error) {

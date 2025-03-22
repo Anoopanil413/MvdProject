@@ -61,6 +61,22 @@ class UserRepository {
     }
     throw new Error('User not found');
   }
+  async getTokenByUserId(userId) {
+    const userData =  await UserModel.findById(userId);
+    return userData.firebaseToken;
+    }
+    async saveToken(userId, token) {
+        const user = await UserModel.findById(userId);
+        user.firebaseToken = token;
+        await user.save();
+        return user;
+    }
+    async removeToken(userId) {
+        const user = await UserModel.findById(userId);
+        user.firebaseToken = false;
+        await user.save();
+        return user;
+    }
 
 
 }

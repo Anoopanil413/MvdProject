@@ -2,6 +2,7 @@ import express from 'express';
 import UserController from '../adapters/controllers/UserController.js';
 import AuthenticationController from '../adapters/controllers/AuthenticationController.js';
 import JwtService from '../infrastructure/auth/JwtService.js';
+import NotificationController from '../adapters/controllers/NotificationController.js';
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.get('/getMyVehicles', authenticationController.authenticate,UserControlle
 router.get('/validateUser', authenticationController.authenticate,UserController.getUSer);
 router.post('/sendEMail', authenticationController.authenticate,UserController.handleSendEmail);
 router.post('/fcmToken', authenticationController.authenticate,UserController.setToken);
-router.post('/send-notification"', authenticationController.authenticate,UserController.sendNotification);
+router.post('/sendNotification', authenticationController.authenticate,UserController.sendNotification);
+router.get('/notification', authenticationController.authenticate,UserController.getAllUnreadNotifications);
 
 export default router;

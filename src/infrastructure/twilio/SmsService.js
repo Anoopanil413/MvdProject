@@ -66,7 +66,7 @@ class Fast2SmsOtpService {
 
     await otpEntry.save();
 
-    const message = `Your OTP code is ${otpCode}`;
+    const message = `Your OTP for Let Me Go  is ${otpCode}`;
     const payload = {
       route: 'q',
       message: message,
@@ -108,6 +108,7 @@ class Fast2SmsOtpService {
   }
 
   async sendMessage(phone, messageContent,senderId,receiverId) {
+    console.log('phone',phone,messageContent,senderId,receiverId)
     const payload = {
       route: 'q',
       message: messageContent,
@@ -124,12 +125,14 @@ class Fast2SmsOtpService {
 
     // Send message using Fast2SMS API
     const response = await axios.post(this.baseUrl, payload, { headers });
+    console.log('response',response.data)
     const messageData = new Message({
       senderId,
       receiverId,
       message: messageContent,
       sentAt: new Date(),
     })
+    await messageData.save();
 
     if (response.data && response.data.return !== true) {
       throw new Error('Failed to send message via Fast2SMS');

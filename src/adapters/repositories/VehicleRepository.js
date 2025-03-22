@@ -13,10 +13,12 @@ class VehicleRepository {
     }
     async getVehicleWithUserDataByNumber(vehicleNumber) {
         try {
-            const vehicles = await VehicleModel.find({ vehicleNumber: vehicleNumber.toString().toLowerCase().trim() }).populate({
+            const vehicleNUmb = vehicleNumber.toString().toLowerCase().trim() 
+            const vehicles = await VehicleModel.find({ vehicleNumber:vehicleNUmb }).populate({
               path: 'userId',
               select: 'phone name email location city phoneVisible', 
             });
+
         
             // Process to exclude phone when phoneVisible is false
             const processedVehicles = vehicles.map((vehicle) => {

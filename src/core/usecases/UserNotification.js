@@ -1,5 +1,6 @@
 import CustomError from "../../adapters/controllers/ErrorHandler.js";
 
+
 export default class UserNotification {
     constructor(notificationService, messageRepository,userRepository) {
         this.notificationService = notificationService;
@@ -7,16 +8,28 @@ export default class UserNotification {
         this.userRepository = userRepository;
     }
 
-    async sendNotificationToUser(userId, message) {
+    async sendNotificationToUser(userId, data) {
         const user = await this.userRepository.findById(userId);
         if (!user) {
             throw new Error('User not found');  
         }
-        await this.notificationService.sendNotification(user.phone, message);
-        const messageRecord = await this.messageRepository.createMessageRecord({
-            userId: user.id,
-            message,
-        });
+        const receiver = await this.userRepository.findById(data.receiverId);
+        if (!receiver) {
+            throw new Error('Receiver not found');
+        }
+        const message = {
+            title: data.title,
+            body: data.body
+        };
+       const sendNOtifi =  await this.notificationService.sendNotification(receiver.firebaseToken, message);
+        const messageData = {
+            senderId: userId,
+            receiverId: userId,
+            content: message.body,
+            type: 'notification'
+        }
+        console.log("sendNOtifi",sendNOtifi);
+        const messageRecord = await this.messageRepository.createMessageRecord(messageData);
         return messageRecord;
     }
 
@@ -108,5 +121,42 @@ export default class UserNotification {
 
     return 'Email sent successfully';
 
+    }
+
+
+    async setUserToken(userId, token) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.firebaseToken = token;
+        await this.userRepository.save(user);
+        return user;
+    }
+
+    async getUserTokenBYUserId(userId) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user.firebaseToken;
+    }
+
+    async removeUserToken(userId) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.firebaseToken = false;
+        await this.userRepository.save(user);
+        return user;
+    }
+    async getUserUnreadNotificationMessages(userId) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        const messages = await this.messageRepository.getMessagesByUserId(userId);
+        return messages.filter((message) => (message.type === "notification" && !message.read));
     }
 }

@@ -3,9 +3,9 @@ import Message from '../../infrastructure/orm/models/MessageModal.js';
 class MessageRepository {
 
 
-    async createMessageRecord(message) {
+    async createMessageRecord(messageData) {
         try {
-            const message = new Message(message);
+            const message = new Message(messageData);
             await message.save();
 
             return message;
@@ -24,4 +24,4 @@ class MessageRepository {
     }
 }
 
-export default MessageRepository;
+export default new MessageRepository();

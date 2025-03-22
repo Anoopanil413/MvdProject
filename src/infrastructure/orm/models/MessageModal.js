@@ -23,7 +23,16 @@ const messageSchema = new mongoose.Schema({
         type: String,
         enum: ['text', 'notification','email'],
         default: 'text'
-    }
+    },
+    read: {
+        type: Boolean,
+        default: false
+      },
+      status: {
+        type: String,
+        enum: ['sent', 'delivered', 'failed'],
+        default: 'sent'
+      },
 });
 
 const Message = mongoose.model('Message', messageSchema);

@@ -1,7 +1,9 @@
 import admin from "../../../firebase.js";
  class UserNotificationService{
 
-    static async sendNotification(phone, message){
+     async sendNotification(token, message){
+        if(!token) throw new Error('Token is required');
+        if(!message) throw new Error('Message is required');
         const payload = {
             notification: {
                 title: message.title,
@@ -9,7 +11,7 @@ import admin from "../../../firebase.js";
             }
         };
 
-        payload.token = phone;
+        payload.token = token;
     try {
            return  await admin.messaging().send(payload)
         } catch (error) {
@@ -19,7 +21,7 @@ import admin from "../../../firebase.js";
 
 
     }
-    
+
 
 } 
 
