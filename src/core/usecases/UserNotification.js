@@ -24,11 +24,10 @@ export default class UserNotification {
        const sendNOtifi =  await this.notificationService.sendNotification(receiver.firebaseToken, message);
         const messageData = {
             senderId: userId,
-            receiverId: userId,
+            receiverId: data.receiverId,
             content: message.body,
             type: 'notification'
         }
-        console.log("sendNOtifi",sendNOtifi);
         const messageRecord = await this.messageRepository.createMessageRecord(messageData);
         return messageRecord;
     }
@@ -158,5 +157,15 @@ export default class UserNotification {
         }
         const messages = await this.messageRepository.getMessagesByUserId(userId);
         return messages.filter((message) => (message.type === "notification" && !message.read));
+    }
+
+    async clearAllNotifications(userId) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        const messages = await this.messageRepository.markAllNotificatioRead(userId);
+
+        return messages;
     }
 }

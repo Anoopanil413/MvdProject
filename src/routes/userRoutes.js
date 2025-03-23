@@ -27,6 +27,7 @@ router.get('/validateUser', authenticationController.authenticate,UserController
 router.post('/sendEMail', authenticationController.authenticate,UserController.handleSendEmail);
 router.post('/fcmToken', authenticationController.authenticate,UserController.setToken);
 router.post('/sendNotification', authenticationController.authenticate,UserController.sendNotification);
-router.get('/notification', authenticationController.authenticate,UserController.getAllUnreadNotifications);
+router.get('/unreadNotifications', authenticationController.authenticate,UserController.getAllUnreadNotifications);
+router.post('/clearAllNotifications', authenticationController.authenticate,UserController.clearAllNotifications);
 
 export default router;
